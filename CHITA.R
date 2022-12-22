@@ -56,28 +56,28 @@ all_meteo_data$tavg[all_meteo_data$tavg < 5] = 0
 
 # группируем по месяцам, годам и id 
 # и сводим в таблицу с помесячными суммами активных температур на все станции и годы. сумма активных температур меньше 30
-sum_monht_tavg = all_meteo_data |> group_by(month, id, year) |> 
-  summarise(sum_tavg = sum(tavg, na.rm = TRUE)) |> print(n=500) |> filter(sum_tavg >= 30)
+sum_monht_tavg = all_meteo_data %>% group_by(month, id, year) %>% 
+  summarise(sum_tavg = sum(tavg <= 30, na.rm = TRUE)) %>% print(n=500)
 
 # сбрасываем группировку
 sum_monht_tavg = ungroup(sum_monht_tavg)
 
 # группируем по месяцам и сводим в таблицу со средними помесячными активными температурами 
 mean_month_tavg = sum_monht_tavg %>% group_by(month) %>%
-  summarise(mean_tavg = mean(sum_tavg, na.rm=T))
+  summarise(mean_tavg = mean(sum_tavg, na.rm=TRUE))
 
 # считаем среднюю сумму активных температур (>5) за год
 sum_year_tavg = sum(mean_month_tavg$mean_tavg) 
 
 # добавляем в сводную таблицу переменные из табл 1 методички https://ecologymodeling.github.io/Tests.html
-# пока не убрал некоторые нули была ошибка: 
+# пока не убрал часть нулей была ошибка: 
 # Error in `mutate()`:
 # ! Problem while computing `afi = c(...)`.
 # ✖ `afi` must be size 8 or 1, not 12.
 mean_month_tavg = mean_month_tavg %>% mutate(
-  afi = c(32.11,26.31,25.64,23.2,18.73,16.3,13.83,0),
-  bfi = c(11.3,9.26,9.03,8.16,6.59,5.73,4.87,0),
-  di = c(0.33,1,1,1,0.32,0,0,0))
+  afi = c(0,0,0,32.11,26.31,25.64,23.2,18.73,16.3,13.83,0,0),
+  bfi = c(0,0,0,11.3,9.26,9.03,8.16,6.59,5.73,4.87,0,0),
+  di = c(0,0,0,0.33,1,1,1,0.32,0,0,0,0))
 
 # добавляем в сводную таблицу переменную Fi, расчитанную по формуле из методички
 mean_month_tavg = mean_month_tavg %>% mutate(Fi = afi+bfi*mean_tavg)
