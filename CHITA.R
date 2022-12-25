@@ -70,10 +70,6 @@ mean_month_tavg = sum_monht_tavg %>% group_by(month) %>%
 sum_year_tavg = sum(mean_month_tavg$mean_tavg) 
 
 # добавляем в сводную таблицу переменные из табл 1 методички https://ecologymodeling.github.io/Tests.html
-# пока не убрал часть нулей была ошибка: 
-# Error in `mutate()`:
-# ! Problem while computing `afi = c(...)`.
-# ✖ `afi` must be size 8 or 1, not 12.
 mean_month_tavg = mean_month_tavg %>% mutate(
   afi = c..(0,0,0,32.11,26.31,25.64,23.2,18.73,16.3,13.83,0,0),
   bfi = c(0,0,0,11.3,9.26,9.03,8.16,6.59,5.73,4.87,0,0),
