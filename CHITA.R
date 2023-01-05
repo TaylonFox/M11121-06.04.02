@@ -54,10 +54,13 @@ all_meteo_data = all_meteo_data %>% mutate(
 # в векторе можно подменить все значения меньше 5 на 0 (делаем это через substitute)
 all_meteo_data$tavg[all_meteo_data$tavg < 5] = 0
 
+#убираем значения выше 30 градусов
+all_meteo_data$tavg[all_meteo_data$tavg > 30] = 0
+
 # группируем по месяцам, годам и id 
 # и сводим в таблицу с помесячными суммами активных температур на все станции и годы. сумма активных температур меньше 30
 sum_monht_tavg = all_meteo_data %>% group_by(month, id, year) %>% 
-  summarise(sum_tavg = sum(tavg <= 30, na.rm = TRUE)) %>% print(n=500)
+  summarise(sum_tavg = sum(tavg, na.rm = TRUE)) %>% print(n=500)
 
 # сбрасываем группировку
 sum_monht_tavg = ungroup(sum_monht_tavg)
@@ -71,7 +74,7 @@ sum_year_tavg = sum(mean_month_tavg$mean_tavg)
 
 # добавляем в сводную таблицу переменные из табл 1 методички https://ecologymodeling.github.io/Tests.html
 mean_month_tavg = mean_month_tavg %>% mutate(
-  afi = c..(0,0,0,32.11,26.31,25.64,23.2,18.73,16.3,13.83,0,0),
+  afi = c(0,0,0,32.11,26.31,25.64,23.2,18.73,16.3,13.83,0,0),
   bfi = c(0,0,0,11.3,9.26,9.03,8.16,6.59,5.73,4.87,0,0),
   di = c(0,0,0,0.33,1,1,1,0.32,0,0,0,0))
 
@@ -84,4 +87,5 @@ Yj = 10^6 * (sum(mean_month_tavg$Fi * mean_month_tavg$di * 300 / (
 Yj = Yj / 1000 / 100
 
 # Итого, урожайность пшеницы в регионе 75 в 2015 году 
-# составит = 11.234 ц/га
+# составит = 138.263 ц/га
+Yj
